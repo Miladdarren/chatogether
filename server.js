@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
 
 // Routes modules
 const indexRouter = require('./routes/index');
@@ -13,6 +14,12 @@ const app = express();
 
 // Connecting to mongoDB
 require('./config/db');
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport Config
+require('./config/passport');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +41,7 @@ app.use((req, res, next) => {
 });
 
 // error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

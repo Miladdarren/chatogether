@@ -4,7 +4,6 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
-const passport = require('passport');
 
 // Load User model
 const User = require('../models/User');
@@ -21,7 +20,7 @@ router.post('/register', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    // Search for user by email
+    // Find user by email
     User.findOne({ email: email })
         .then(user => {
             // Email exist
@@ -30,7 +29,7 @@ router.post('/register', (req, res) => {
                 return res.status(400).json(errors);
             }
 
-            // Search for user by username
+            // Find user by username
             User.findOne({ username: username })
                 .then(user => {
                     // Username exist
@@ -39,7 +38,7 @@ router.post('/register', (req, res) => {
                         return res.status(400).json(errors);
                     }
 
-                    /// Registering user ///
+                    // Registering user //
 
                     // Creating new user
                     const newUser = new User({
@@ -72,6 +71,56 @@ router.post('/register', (req, res) => {
 // @route  POST auth/login
 // @desc   Login user
 // @access Public
-router.post('/login', (req, res) => {});
+router.post('/login', (req, res) => {
+    const errors = {};
+    const emailOrUsername = req.body.emailOrUsername;
+    const password = req.body.password;
+
+    // Find
+    User.findOne()
+        .or([{ username: emailOrUsername }, { email: emailOrUsername }])
+        .then(user => {
+            if (!user) {
+                errors.nouser = 'User not found';
+                return res.status(404).json(errors);
+            }
+
+            // Check password
+            bcrypt.compare(password, user.password).then(isMatch => {
+                // Password does not match
+                if (!isMatch) {
+                    errors.badpassword = 'Incorrect password';
+                    return res.status(400).json(errors);
+                }
+
+                // User matched //
+
+                // Create JWT payload
+                const payload = {
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    username: user.username,
+                    avatar: user.avatar
+                };
+
+                // Sign token
+                jwt.sign(
+                    payload,
+                    keys.secretKey,
+                    {
+                        expiresIn: 3600
+                    },
+                    (err, token) => {
+                        res.json({
+                            success: true,
+                            token: 'Bearer ' + token
+                        });
+                    }
+                );
+            });
+        })
+        .catch(err => console.log(err));
+});
 
 module.exports = router;
