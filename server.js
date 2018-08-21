@@ -19,7 +19,7 @@ require('./config/db');
 app.use(passport.initialize());
 
 // Passport Config
-require('./config/passport');
+require('./config/passport')(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
