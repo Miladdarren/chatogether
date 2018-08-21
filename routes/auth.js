@@ -20,47 +20,44 @@ router.post('/register', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    // Find user by email
-    User.findOne({ email: email })
-        .then(user => {
-            // Email exist
-            if (user) {
-                errors.emailexist = 'Email already exist!';
+    // Search for existing user
+    User.find()
+        .or([{ username: username }, { email: email }])
+        .then(users => {
+            // User exist
+            if (users.length !== 0) {
+                for (let user of users) {
+                    if (user.username === username)
+                        errors.usernameexist = 'Username already exist!';
+
+                    if (user.email === email)
+                        errors.emailexist = 'Email already exist!';
+                }
+
                 return res.status(400).json(errors);
             }
 
-            // Find user by username
-            User.findOne({ username: username })
-                .then(user => {
-                    // Username exist
-                    if (user) {
-                        errors.usernameexist = 'Username already exist!';
-                        return res.status(400).json(errors);
-                    }
+            // Registering user //
 
-                    // Registering user //
+            // Creating new user
+            const newUser = new User({
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                password: password
+            });
 
-                    // Creating new user
-                    const newUser = new User({
-                        firstName: firstName,
-                        lastName: lastName,
-                        username: username,
-                        email: email,
-                        password: password
-                    });
+            // Hashing password
+            bcrypt
+                .hash(password, keys.saltFactor)
+                .then(hash => {
+                    newUser.password = hash;
 
-                    // Hashing password
-                    bcrypt
-                        .hash(password, keys.saltFactor)
-                        .then(hash => {
-                            newUser.password = hash;
-
-                            // Saving user in database
-                            newUser
-                                .save()
-                                .then(user => res.json(user))
-                                .catch(err => console.log(err));
-                        })
+                    // Saving user in database
+                    newUser
+                        .save()
+                        .then(user => res.json(user))
                         .catch(err => console.log(err));
                 })
                 .catch(err => console.log(err));
