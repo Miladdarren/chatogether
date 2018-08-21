@@ -1,9 +1,9 @@
 const express = require('express');
-
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
+const passport = require('passport');
+const { signJWT } = require('../libs/utilities');
 
 // Load User model
 const User = require('../models/User');
@@ -102,22 +102,36 @@ router.post('/login', (req, res) => {
                 };
 
                 // Sign token
-                jwt.sign(
-                    payload,
-                    keys.secretOrKey,
-                    {
-                        expiresIn: 3600
-                    },
-                    (err, token) => {
-                        res.json({
-                            success: true,
-                            token: 'Bearer ' + token
-                        });
-                    }
-                );
+                signJWT(res, payload);
             });
         })
         .catch(err => console.log(err));
 });
+
+// GOOGLE OAUTH2 //
+
+// @route  GET auth/google
+// @desc   Redirect to google for authentication
+// @access Public
+router.get(
+    '/google',
+    passport.authenticate('google', {
+        scope: ['profile', 'email'],
+        session: false
+    }),
+    (req, res) => {
+        // Create JWT payload
+        const payload = {
+            id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            username: req.user.username,
+            avatar: req.user.avatar
+        };
+
+        // Sign token
+        signJWT(res, payload);
+    }
+);
 
 module.exports = router;
