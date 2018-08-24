@@ -53,7 +53,7 @@ app.use((err, req, res) => {
 
 // json error handler
 app.use((err, req, res, next) => {
-    return res.status(err.status).json(err);
+    return res.status(400).json(err);
 });
 
 module.exports = app;

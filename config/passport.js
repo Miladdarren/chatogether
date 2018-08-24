@@ -2,6 +2,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GithubStrategy = require('passport-github').Strategy;
+const LinkedinStrategy = require('passport-linkedin-oauth2').Strategy;
 
 const User = require('../models/User');
 const keys = require('../config/keys');
@@ -87,6 +88,51 @@ module.exports = passport => {
                     const avatar = profile.photos[0].value;
                     const social = {
                         github: profile.username
+                    };
+                    const password = randomString();
+
+                    User.findOne({ email: email })
+                        .then(user => {
+                            // User found
+                            if (user) {
+                                return done(null, user);
+                            }
+
+                            // User not found so register the user
+                            const newUser = new User({
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
+                                avatar: avatar,
+                                social: social,
+                                password: password
+                            });
+
+                            newUser
+                                .save()
+                                .then(user => done(null, user))
+                                .catch(err => console.log(err));
+                        })
+                        .catch(err => console.log(err));
+                });
+            }
+        )
+    );
+
+    // Linkedin strategy
+    passport.use(
+        new LinkedinStrategy(
+            keys.linkedinAuth,
+            (token, refreshToken, profile, done) => {
+                // Make the code asynchronous
+                // User.findOne won't fire until we have all our data back from Linkedin
+                process.nextTick(() => {
+                    const firstName = profile.name.givenName;
+                    const lastName = profile.name.familyName;
+                    const email = profile.emails[0].value; // Pull the first email
+                    const avatar = profile.photos[0].value;
+                    const social = {
+                        linkedin: profile._json.publicProfileUrl
                     };
                     const password = randomString();
 

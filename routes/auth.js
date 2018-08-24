@@ -138,7 +138,7 @@ router.get(
     }
 );
 
-// Github OAUTH2 //
+// GITHUB OAUTH2 //
 
 // @route  GET auth/github
 // @desc   Redirect to gihub for authentication
@@ -146,6 +146,29 @@ router.get(
 router.get(
     '/github',
     passport.authenticate('github', { session: false }),
+    (req, res) => {
+        // Create JWT payload
+        const payload = {
+            id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            username: req.user.username,
+            avatar: req.user.avatar
+        };
+
+        // Sign token
+        signJWT(res, payload);
+    }
+);
+
+// LINKEDIN OAUTH2 //
+
+// @route  GET auth/linkedin
+// @desc   Redirect to linkedin for authentication
+// @access Public
+router.get(
+    '/linkedin',
+    passport.authenticate('linkedin', { session: false }),
     (req, res) => {
         // Create JWT payload
         const payload = {

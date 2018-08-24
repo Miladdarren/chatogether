@@ -14,5 +14,11 @@ module.exports = {
         clientSecret: env.githubClientSecret,
         callbackURL: env.githubCallbackURL,
         scope: ['user:email'] // Fetch private emails
+    },
+    linkedinAuth: {
+        clientID: env.linkedinClientID,
+        clientSecret: env.linkedinClientSecret,
+        callbackURL: env.linkedinCallbackURL,
+        scope: ['r_emailaddress', 'r_basicprofile']
     }
 };
