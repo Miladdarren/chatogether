@@ -51,4 +51,9 @@ app.use((err, req, res) => {
     res.render('error');
 });
 
+// json error handler
+app.use((err, req, res, next) => {
+    return res.status(err.status).json(err);
+});
+
 module.exports = app;

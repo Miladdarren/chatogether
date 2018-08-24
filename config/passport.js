@@ -2,6 +2,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GithubStrategy = require('passport-github').Strategy;
+
 const User = require('../models/User');
 const keys = require('../config/keys');
 const { randomString } = require('../libs/utilities');
@@ -36,7 +37,6 @@ module.exports = passport => {
                     const firstName = profile.name.givenName;
                     const lastName = profile.name.familyName;
                     const email = profile.emails[0].value; // Pull the first email
-                    const username = email;
                     const avatar = profile.photos[0].value;
                     const password = randomString();
 
@@ -51,7 +51,6 @@ module.exports = passport => {
                             const newUser = new User({
                                 firstName: firstName,
                                 lastName: lastName,
-                                username: username,
                                 email: email,
                                 avatar: avatar,
                                 password: password
@@ -85,8 +84,10 @@ module.exports = passport => {
                         .slice(-1)
                         .join(' ');
                     const email = profile.emails[0].value; // Pull the first email
-                    const username = email;
                     const avatar = profile.photos[0].value;
+                    const social = {
+                        github: profile.username
+                    };
                     const password = randomString();
 
                     User.findOne({ email: email })
@@ -100,9 +101,9 @@ module.exports = passport => {
                             const newUser = new User({
                                 firstName: firstName,
                                 lastName: lastName,
-                                username: username,
                                 email: email,
                                 avatar: avatar,
+                                social: social,
                                 password: password
                             });
 

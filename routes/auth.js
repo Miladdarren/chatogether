@@ -5,13 +5,17 @@ const keys = require('../config/keys');
 const passport = require('passport');
 const { signJWT } = require('../libs/utilities');
 
+// Validator configuration
+const validate = require('express-validation');
+const validation = require('../validation/index');
+
 // Load User model
 const User = require('../models/User');
 
 // @route  POST auth/register
 // @desc   Register user
 // @access Public
-router.post('/register', (req, res) => {
+router.post('/register', validate(validation.register), (req, res) => {
     const errors = {};
 
     const firstName = req.body.firstName;
@@ -68,12 +72,12 @@ router.post('/register', (req, res) => {
 // @route  POST auth/login
 // @desc   Login user
 // @access Public
-router.post('/login', (req, res) => {
+router.post('/login', validate(validation.login), (req, res) => {
     const errors = {};
     const emailOrUsername = req.body.emailOrUsername;
     const password = req.body.password;
 
-    // Find
+    // Find user by email or username
     User.findOne()
         .or([{ username: emailOrUsername }, { email: emailOrUsername }])
         .then(user => {
