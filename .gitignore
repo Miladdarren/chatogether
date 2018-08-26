@@ -39,3 +39,6 @@ jspm_packages
 
 # Environment variables
 env.js
+
+# Angular build directory
+/public
