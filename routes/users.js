@@ -232,4 +232,22 @@ router.delete(
     }
 );
 
+// @route  DELETE users/current
+// @desc   Delete user profile
+// @access Private
+router.delete(
+    '/current',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        User.findByIdAndRemove(req.user.id)
+            .then(() => {
+                res.json({ success: true });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(404).json(err);
+            });
+    }
+);
+
 module.exports = router;
