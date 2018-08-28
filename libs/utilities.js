@@ -18,3 +18,11 @@ exports.randomString = () => {
         .toString(36)
         .slice(1);
 };
+
+exports.sendError = (res, status, message, err) => {
+    const errors = {};
+    errors.message = message;
+
+    if (err) console.log(err);
+    res.status(status).json(errors);
+};

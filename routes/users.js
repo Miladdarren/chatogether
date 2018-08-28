@@ -4,6 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const keys = require('../config/keys');
 const mongoose = require('mongoose');
+const { sendError } = require('../libs/utilities');
 
 // Validator configuration
 const validate = require('express-validation');
@@ -11,6 +12,13 @@ const validation = require('../validation/index');
 
 // Load User model
 const User = require('../models/User');
+
+// Error messages
+const errMessages = {};
+errMessages.server = 'Server Problem';
+errMessages.noUsers = 'There are no users registered yet!';
+errMessages.noUser = 'No user found';
+errMessages.badCurrentPassword = 'Incorrect current password';
 
 // @route  GET users/current
 // @desc   Return current logged in user
@@ -39,21 +47,20 @@ router.get(
     '/all',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
-        const errors = {};
-
         User.find(
             {},
             'firstName lastName username email avatar experience social'
         )
             .then(users => {
                 if (!users) {
-                    errors.nouser = 'No user';
-                    return res.status(404).json(errors);
+                    return sendError(res, 404, errMessages.noUsers);
                 }
 
                 res.json(users);
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                sendError(res, 500, errMessages.server, err);
+            });
     }
 );
 
@@ -64,8 +71,6 @@ router.get(
     '/:usernameOrUserId',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
-        const errors = {};
-
         // Find user by username
         User.findOne({ username: req.params.usernameOrUserId })
             .then(user => {
@@ -89,8 +94,7 @@ router.get(
                     User.findById(req.params.usernameOrUserId)
                         .then(user => {
                             if (!user) {
-                                errors.nouser = 'User not found';
-                                res.status(404).json(errors);
+                                return sendError(res, 404, errMessages.noUser);
                             }
 
                             res.json({
@@ -105,16 +109,13 @@ router.get(
                             });
                         })
                         .catch(err => {
-                            console.log(err);
-                            errors.nouser = 'User not found';
-                            res.status(404).json(errors);
+                            sendError(res, 404, errMessages.noUser, err);
                         });
-                } else {
-                    errors.nouser = 'User not found';
-                    res.status(404).json(errors);
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                sendError(res, 500, errMessages.server, err);
+            });
     }
 );
 
@@ -130,12 +131,9 @@ router.patch(
         bcrypt
             .compare(req.body.currentPassword, req.user.password)
             .then(isMatch => {
-                const errors = {};
-
                 // Password does not match
                 if (!isMatch) {
-                    errors.badpassword = 'Incorrect current password';
-                    return res.status(400).json(errors);
+                    return sendError(res, 400, errMessages.badCurrentPassword);
                 }
 
                 // Password matched //
@@ -177,7 +175,9 @@ router.patch(
                     { new: true }
                 )
                     .then(user => res.json(user))
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        sendError(res, 500, errMessages.server, err);
+                    });
             });
     }
 );
@@ -228,7 +228,9 @@ router.delete(
                 // Save
                 user.save().then(user => res.json(user));
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                sendError(res, 500, errMessages.server, err);
+            });
     }
 );
 
@@ -244,8 +246,7 @@ router.delete(
                 res.json({ success: true });
             })
             .catch(err => {
-                console.log(err);
-                res.status(404).json(err);
+                sendError(res, 500, errMessages.server, err);
             });
     }
 );

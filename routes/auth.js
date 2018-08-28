@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const keys = require('../config/keys');
 const passport = require('passport');
-const { signJWT } = require('../libs/utilities');
+const { signJWT, sendError } = require('../libs/utilities');
 
 // Validator configuration
 const validate = require('express-validation');
@@ -12,12 +12,18 @@ const validation = require('../validation/index');
 // Load User model
 const User = require('../models/User');
 
+// Error messages
+const errMessages = {};
+errMessages.server = 'Server Problem';
+errMessages.usernameExist = 'Username already exist!';
+errMessages.emailExist = 'Email already exist!';
+errMessages.noUser = 'User not found';
+errMessages.badPassword = 'Incorrect password';
+
 // @route  POST auth/register
 // @desc   Register user
 // @access Public
 router.post('/register', validate(validation.register), (req, res) => {
-    const errors = {};
-
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const username = req.body.username;
@@ -32,13 +38,11 @@ router.post('/register', validate(validation.register), (req, res) => {
             if (users.length !== 0) {
                 for (let user of users) {
                     if (user.username === username)
-                        errors.usernameexist = 'Username already exist!';
+                        return sendError(res, 400, errMessages.usernameExist);
 
                     if (user.email === email)
-                        errors.emailexist = 'Email already exist!';
+                        return sendError(res, 400, errMessages.emailExist);
                 }
-
-                return res.status(400).json(errors);
             }
 
             // Registering user //
@@ -62,18 +66,23 @@ router.post('/register', validate(validation.register), (req, res) => {
                     newUser
                         .save()
                         .then(user => res.json(user))
-                        .catch(err => console.log(err));
+                        .catch(err => {
+                            sendError(res, 500, errMessages.server, err);
+                        });
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    sendError(res, 500, errMessages.server, err);
+                });
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            sendError(res, 500, errMessages.server, err);
+        });
 });
 
 // @route  POST auth/login
 // @desc   Login user
 // @access Public
 router.post('/login', validate(validation.login), (req, res) => {
-    const errors = {};
     const emailOrUsername = req.body.emailOrUsername;
     const password = req.body.password;
 
@@ -82,16 +91,14 @@ router.post('/login', validate(validation.login), (req, res) => {
         .or([{ username: emailOrUsername }, { email: emailOrUsername }])
         .then(user => {
             if (!user) {
-                errors.nouser = 'User not found';
-                return res.status(404).json(errors);
+                return sendError(res, 404, errMessages.noUser);
             }
 
             // Check password
             bcrypt.compare(password, user.password).then(isMatch => {
                 // Password does not match
                 if (!isMatch) {
-                    errors.badpassword = 'Incorrect password';
-                    return res.status(400).json(errors);
+                    return sendError(res, 400, errMessages.badPassword);
                 }
 
                 // User matched //
@@ -109,7 +116,9 @@ router.post('/login', validate(validation.login), (req, res) => {
                 signJWT(res, payload);
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            sendError(res, 500, errMessages.server, err);
+        });
 });
 
 // GOOGLE OAUTH2 //
