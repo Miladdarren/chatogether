@@ -1,0 +1,78 @@
+﻿<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+            <form class="login100-form validate-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <span class="login100-form-title p-b-49">
+                    Login
+                </span>
+
+                <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Email or Username is reauired">
+                    <span class="label-input100">Email or Username</span>
+                    <input class="input100 form-control" type="text" formControlName="emailOrUsername" [ngClass]="{ 'is-invalid': submitted && f.emailOrUsername.errors }"
+                        placeholder="Type your email or username">
+                    <span class="focus-input100" data-symbol="&#xf206;"></span>
+                    <div *ngIf="submitted && f.emailOrUsername.errors" class="invalid-feedback">
+                        <div *ngIf="f.emailOrUsername.errors.required">Email or Username is required</div>
+                    </div>
+                </div>
+
+                <div class="wrap-input100 validate-input form-group" data-validate="Password is required">
+                    <span class="label-input100">Password</span>
+                    <input class="input100 form-control" type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                        placeholder="Type your password">
+                    <span class="focus-input100" data-symbol="&#xf190;"></span>
+                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.errors.required">Password is required</div>
+                    </div>
+                </div>
+
+                <div class="text-right p-t-8 p-b-31">
+                    <a href="#">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <div class="wrap-login100-form-btn form-group">
+                        <div class="login100-form-bgbtn"></div>
+                        <button [hidden]="loading" class="login100-form-btn">
+                            Login
+                        </button>
+                    </div>
+                    <img *ngIf="loading" align="center" src="src/assests/images/loading.gif" />
+                </div>
+
+                <div class="txt1 text-center p-t-54 p-b-20">
+                    <span>
+                        Or Login with
+                    </span>
+                </div>
+
+                <div class="flex-c-m">
+                    <a href="#" class="login100-social-item bg1">
+                        <i class="fa fa-github"></i>
+                    </a>
+
+                    <a href="#" class="login100-social-item bg2">
+                        <i class="fa fa-linkedin"></i>
+                    </a>
+
+                    <a href="#" class="login100-social-item bg3">
+                        <i class="fa fa-google"></i>
+                    </a>
+                </div>
+
+                <div class="flex-col-c">
+                    <hr>
+                    <span class="txt1 p-b-17">
+                        Don't have an account yet?
+                    </span>
+
+                    <a [routerLink]="['/register']" class="txt2">
+                        Sign Up
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

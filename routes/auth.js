@@ -65,7 +65,7 @@ router.post('/register', validate(validation.register), (req, res) => {
                     // Saving user in database
                     newUser
                         .save()
-                        .then(user => res.json(user))
+                        .then(() => res.json({ message: 'success' }))
                         .catch(err => {
                             sendError(res, 500, errMessages.server, err);
                         });
