@@ -3,10 +3,19 @@ const keys = require('../config/keys');
 
 exports.signJWT = (res, payload) => {
     jwt.sign(payload, keys.secretOrKey, keys.jwtExpires, (err, token) => {
-        res.json({
-            success: true,
-            token: 'Bearer ' + token
-        });
+        const accessToken = 'Bearer ' + token;
+        res.cookie('accessToken', accessToken, keys.cookieOptions).json(
+            accessToken
+        );
+    });
+};
+
+exports.socialJWTsign = (res, payload) => {
+    jwt.sign(payload, keys.secretOrKey, keys.jwtExpires, (err, token) => {
+        const accessToken = 'Bearer ' + token;
+        res.cookie('accessToken', accessToken, keys.cookieOptions).redirect(
+            '/'
+        );
     });
 };
 

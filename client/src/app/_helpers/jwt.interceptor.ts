@@ -1,28 +1,30 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
+    HttpRequest,
+    HttpHandler,
+    HttpEvent,
+    HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    // add authorization header with jwt token if available
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser && currentUser.token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `${currentUser.token}`
+    constructor(private cookieService: CookieService) {}
+    intercept(
+        request: HttpRequest<any>,
+        next: HttpHandler
+    ): Observable<HttpEvent<any>> {
+        // add authorization header with jwt token if available
+        const accessToken = this.cookieService.get('accessToken');
+        if (accessToken) {
+            request = request.clone({
+                setHeaders: {
+                    Authorization: `${accessToken}`
+                }
+            });
         }
-      });
-    }
 
-    return next.handle(request);
-  }
+        return next.handle(request);
+    }
 }

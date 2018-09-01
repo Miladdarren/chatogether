@@ -4,6 +4,9 @@ module.exports = {
     secretOrKey: env.secretOrKey,
     saltFactor: env.saltFactor,
     jwtExpires: { expiresIn: env.jwtExpires },
+    cookieOptions: {
+        expires: new Date(Date.now() + 3600000)
+    },
     googleAuth: {
         clientID: env.googleClientID,
         clientSecret: env.googleClientSecret,

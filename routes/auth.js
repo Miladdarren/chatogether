@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const keys = require('../config/keys');
 const passport = require('passport');
-const { signJWT, sendError } = require('../libs/utilities');
+const { signJWT, socialJWTsign, sendError } = require('../libs/utilities');
 
 // Validator configuration
 const validate = require('express-validation');
@@ -143,7 +143,7 @@ router.get(
         };
 
         // Sign token
-        signJWT(res, payload);
+        socialJWTsign(res, payload);
     }
 );
 
@@ -166,7 +166,7 @@ router.get(
         };
 
         // Sign token
-        signJWT(res, payload);
+        socialJWTsign(res, payload);
     }
 );
 
@@ -189,7 +189,7 @@ router.get(
         };
 
         // Sign token
-        signJWT(res, payload);
+        socialJWTsign(res, payload);
     }
 );
 

@@ -23,7 +23,10 @@ module.exports = passport => {
                     }
                     return done(null, false);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    console.log(err);
+                    return done(null, false);
+                });
         })
     );
 
@@ -35,9 +38,11 @@ module.exports = passport => {
                 // Make the code asynchronous
                 // User.findOne won't fire until we have all our data back from Google
                 process.nextTick(() => {
+                    console.log(profile);
                     const firstName = profile.name.givenName;
                     const lastName = profile.name.familyName;
                     const email = profile.emails[0].value; // Pull the first email
+                    const username = email;
                     const avatar = profile.photos[0].value;
                     const password = randomString();
 
@@ -53,6 +58,7 @@ module.exports = passport => {
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
+                                username: username,
                                 avatar: avatar,
                                 password: password
                             });
@@ -60,9 +66,15 @@ module.exports = passport => {
                             newUser
                                 .save()
                                 .then(user => done(null, user))
-                                .catch(err => console.log(err));
+                                .catch(err => {
+                                    console.log(err);
+                                    return done(null, false);
+                                });
                         })
-                        .catch(err => console.log(err));
+                        .catch(err => {
+                            console.log(err);
+                            return done(null, false);
+                        });
                 });
             }
         )
@@ -85,6 +97,7 @@ module.exports = passport => {
                         .slice(-1)
                         .join(' ');
                     const email = profile.emails[0].value; // Pull the first email
+                    const username = email;
                     const avatar = profile.photos[0].value;
                     const social = {
                         github: profile.username
@@ -103,6 +116,7 @@ module.exports = passport => {
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
+                                username: username,
                                 avatar: avatar,
                                 social: social,
                                 password: password
@@ -111,9 +125,15 @@ module.exports = passport => {
                             newUser
                                 .save()
                                 .then(user => done(null, user))
-                                .catch(err => console.log(err));
+                                .catch(err => {
+                                    console.log(err);
+                                    return done(null, false);
+                                });
                         })
-                        .catch(err => console.log(err));
+                        .catch(err => {
+                            console.log(err);
+                            return done(null, false);
+                        });
                 });
             }
         )
@@ -130,6 +150,7 @@ module.exports = passport => {
                     const firstName = profile.name.givenName;
                     const lastName = profile.name.familyName;
                     const email = profile.emails[0].value; // Pull the first email
+                    const username = email;
                     const avatar = profile.photos[0].value;
                     const social = {
                         linkedin: profile._json.publicProfileUrl
@@ -148,6 +169,7 @@ module.exports = passport => {
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
+                                username: username,
                                 avatar: avatar,
                                 social: social,
                                 password: password
@@ -156,9 +178,15 @@ module.exports = passport => {
                             newUser
                                 .save()
                                 .then(user => done(null, user))
-                                .catch(err => console.log(err));
+                                .catch(err => {
+                                    console.log(err);
+                                    return done(null, false);
+                                });
                         })
-                        .catch(err => console.log(err));
+                        .catch(err => {
+                            console.log(err);
+                            return done(null, false);
+                        });
                 });
             }
         )
