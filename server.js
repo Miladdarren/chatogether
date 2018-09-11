@@ -31,9 +31,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 
-// Catch all other routes and return the angular index file
+// Catch all other GET requests and return 404 page
 app.get('*', (req, res) => {
-    res.redirect('/');
+    res.sendfile('public/assets/404.html');
 });
 
 // catch 404 and forward to error handler
