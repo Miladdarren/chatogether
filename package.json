@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "start": "node ./bin/www",
+        "start": "node -r dotenv/config ./bin/www",
         "build": "cd client && ng build --prod",
         "client": "npm start --prefix client"
     },
@@ -12,6 +12,7 @@
         "cookie-parser": "~1.4.3",
         "cors": "^2.8.4",
         "debug": "^3.1.0",
+        "dotenv": "^6.0.0",
         "express": "~4.16.0",
         "express-validation": "^1.0.2",
         "http-errors": "~1.6.2",
