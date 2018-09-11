@@ -3,18 +3,15 @@ const jwtExpires = process.env.JWT_EXPIRES;
 
 const googleClientID = process.env.GOOGLE_AUTH_ID;
 const googleClientSecret = process.env.GOOGLE_AUTH_SECRET;
-const googleCallbackURL =
-    process.env.GOOGLE_AUTH_URL || 'http://localhost:3000/auth/google';
+const googleCallbackURL = process.env.GOOGLE_AUTH_URL;
 
 const githubClientID = process.env.GITHUB_AUTH_ID;
 const githubClientSecret = process.env.GITHUB_AUTH_SECRET;
-const githubCallbackURL =
-    process.env.GITHUB_AUTH_URL || 'http://localhost:3000/auth/github';
+const githubCallbackURL = process.env.GITHUB_AUTH_URL;
 
 const linkedinClientID = process.env.LINKEDIN_AUTH_ID;
 const linkedinClientSecret = process.env.LINKEDIN_AUTH_SECRET;
-const linkedinCallbackURL =
-    process.env.LINKEDIN_AUTH_URL || 'http://localhost:3000/auth/linkedin';
+const linkedinCallbackURL = process.env.LINKEDIN_AUTH_URL;
 
 module.exports = {
     secretOrKey: secretOrKey,

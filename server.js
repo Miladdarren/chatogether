@@ -33,7 +33,7 @@ app.use('/auth', authRouter);
 
 // Catch all other GET requests and return 404 page
 app.get('*', (req, res) => {
-    res.sendfile('public/assets/404.html');
+    res.sendFile('public/assets/404.html');
 });
 
 // catch 404 and forward to error handler

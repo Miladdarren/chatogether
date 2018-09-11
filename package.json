@@ -3,9 +3,10 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "start": "node -r dotenv/config ./bin/www",
-        "build": "cd client && ng build --prod",
-        "client": "npm start --prefix client"
+        "start": "node ./bin/www",
+        "nodemon": "nodemon -r dotenv/config ./bin/www",
+        "build": "cd client && ng build --prod --build-optimizer",
+        "local": "cd client && ng build"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",

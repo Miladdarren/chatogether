@@ -40,5 +40,5 @@ jspm_packages
 # Environment variables
 .env
 
-# Angular build directory
-/public
+# Angular assets directory
+/client/src/assets
