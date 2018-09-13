@@ -1,0 +1,9 @@
+.hidden-atw {
+    @media only screen and (min-width: 768px) {
+        display: none !important;
+    }
+}
+
+body {
+    max-width: 100vw;
+}

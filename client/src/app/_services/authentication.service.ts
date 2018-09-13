@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { CookieService, CookieOptions } from 'ngx-cookie';
+import { CookieService } from 'ngx-cookie';
 
 import { environment } from '../../environments/environment';
 
@@ -23,6 +23,13 @@ export class AuthenticationService {
                     return user;
                 })
             );
+    }
+
+    loggedIn(): boolean {
+        if (this.cookieService.get('accessToken')) {
+            // logged in so return true
+            return true;
+        }
     }
 
     logout() {
