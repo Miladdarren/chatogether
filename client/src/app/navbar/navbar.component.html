@@ -1,27 +1,29 @@
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
-                aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+<div id="nav">
+    <nav class="navbar fixed-top navbar-dark bg-dark navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
 
-            <a routerLink="/" class="navbar-brand">
-                <span><img alt="Brand" src="assets/images/brand.ico" width="34px" height="34px"></span>
-                ChatApp
-            </a>
-            <span *ngIf="authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/chat">Chat</a></span>
-        </div>
+                <a routerLink="/" class="navbar-brand">
+                    <span><img alt="Brand" src="assets/images/brand.ico" width="34px" height="34px"></span>
+                    ChatApp
+                </a>
+                <span *ngIf="authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/chat">Chat</a></span>
+            </div>
 
-        <ul class="nav navbar-nav navbar-right">
-            <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/login">Login</a></li>
-            <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/register">Register</a></li>
-            <li *ngIf="authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/profile">Profile</a></li>
-            <li *ngIf="authenticationService.loggedIn()"><a href="#" (click)="onLogoutClick()">Logout</a></li>
-        </ul>
-    </div><!-- /.container-fluid -->
-</nav>
+            <ul class="nav navbar-nav navbar-right">
+                <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/login">Login</a></li>
+                <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/register">Register</a></li>
+                <li *ngIf="authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/profile">Profile</a></li>
+                <li *ngIf="authenticationService.loggedIn()"><a href="#" (click)="onLogoutClick()">Logout</a></li>
+            </ul>
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
