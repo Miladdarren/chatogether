@@ -1,5 +1,4 @@
 const secretOrKey = process.env.SECRET_OR_KEY;
-const jwtExpires = process.env.JWT_EXPIRES;
 
 const googleClientID = process.env.GOOGLE_AUTH_ID;
 const googleClientSecret = process.env.GOOGLE_AUTH_SECRET;
@@ -16,7 +15,7 @@ const linkedinCallbackURL = process.env.LINKEDIN_AUTH_URL;
 module.exports = {
     secretOrKey: secretOrKey,
     saltFactor: 10,
-    jwtExpires: { expiresIn: jwtExpires },
+    jwtExpires: { expiresIn: 3600 },
     cookieOptions: {
         expires: new Date(Date.now() + 3600000)
     },

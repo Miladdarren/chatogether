@@ -31,22 +31,18 @@ module.exports = {
         linkedin: joi
             .string()
             .trim()
-            .uri()
             .optional(),
         instagram: joi
             .string()
             .trim()
-            .uri()
             .optional(),
         telegram: joi
             .string()
             .trim()
-            .uri()
             .optional(),
         github: joi
             .string()
             .trim()
-            .uri()
             .optional(),
         currentPassword: joi.required(),
         newPassword: joi

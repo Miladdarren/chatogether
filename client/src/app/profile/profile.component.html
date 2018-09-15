@@ -1,0 +1,173 @@
+<div *ngIf="!user" class="container-fluid text-center loader-container">
+  <div class="loader"></div>
+</div>
+<div *ngIf="user" class="container bootstrap snippet">
+  <div class="row">
+    <div class="col-sm-10">
+      <span class="login100-form-title p-b-49">
+        {{user.username}}'s Profile
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <!--left col-->
+      <div class="text-center">
+        <img src="{{user.avatar}}" class="avatar img-circle img-thumbnail" alt="avatar">
+        <h6>Upload your photo...</h6>
+        <input type="file" class="text-center center-block file-upload">
+      </div>
+      <hr><br>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Social Media</div>
+        <div class="panel-body">
+          <a *ngIf="user.social.instagram" href="{{user.social.instagram}}" target="_blank"><span class="fa fa-instagram fa-2x"></span></a>
+          <a *ngIf="user.social.linkedin" href="{{user.social.linkedin}}" target="_blank"><span class="fa fa-linkedin fa-2x"></span></a>
+          <a *ngIf="user.social.telegram" href="{{user.social.telegram}}" target="_blank"><span class="fa fa-telegram fa-2x"></span></a>
+          <a *ngIf="user.social.github" href="{{user.social.github}}" target="_blank"><span class="fa fa-github fa-2x"></span></a>
+        </div>
+      </div>
+    </div>
+    <!--/col-3-->
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div class="tab-pane active">
+          <hr>
+          <form class="login100-form validate-form" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="wrap-input100 validate-input form-group" data-validate="Current password is required">
+              <span class="label-input100">In order to edit your profile you need to enter your current password</span>
+              <input class="input100 form-control" type="password" formControlName="currentPassword" [ngClass]="{ 'is-invalid': submitted && f.currentPassword.errors }"
+                placeholder="Type your current password">
+              <span class="focus-input100" data-symbol="&#xf190;"></span>
+              <div *ngIf="submitted && f.currentPassword.errors" class="invalid-feedback">
+                <div *ngIf="f.currentPassword.errors.required">Current assword is required</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="First name is required">
+              <span class="label-input100">First Name</span>
+              <input class="input100 form-control" type="text" formControlName="firstName" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
+                placeholder="Type your first name">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                <div *ngIf="f.firstName.errors.required">First name is required</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Last name is required">
+              <span class="label-input100">Last Name</span>
+              <input class="input100 form-control" type="text" formControlName="lastName" [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }"
+                placeholder="Type your last name">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                <div *ngIf="f.lastName.errors.required">Last name is required</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Username is reauired">
+              <span class="label-input100">Username</span>
+              <input class="input100 form-control" type="text" formControlName="username" [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
+                placeholder="Type your username">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                <div *ngIf="f.username.errors.required">Username is required</div>
+                <div *ngIf="f.username.errors.minlength">Username must be at least 3 characters</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Email is reauired">
+              <span class="label-input100">Email</span>
+              <input class="input100 form-control" type="text" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
+                placeholder="Type your email">
+              <span class="focus-input100" data-symbol="&#9993;"></span>
+              <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">Email is required</div>
+                <div *ngIf="f.email.errors.email">Invalid email</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Not a valid URL">
+              <span class="label-input100">Instagram</span>
+              <input class="input100 form-control" type="text" formControlName="instagram" [ngClass]="{ 'is-invalid': submitted && f.instagram.errors }"
+                placeholder="Instagram account">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.instagram.errors" class="invalid-feedback">
+                <div *ngIf="f.instagram.errors.url">Not a valid URL</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Not a valid URL">
+              <span class="label-input100">Linkedin</span>
+              <input class="input100 form-control" type="text" formControlName="linkedin" [ngClass]="{ 'is-invalid': submitted && f.linkedin.errors }"
+                placeholder="Linkedin account">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.linkedin.errors" class="invalid-feedback">
+                <div *ngIf="f.linkedin.errors.url">Not a valid URL</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Not a valid URL">
+              <span class="label-input100">Telegram</span>
+              <input class="input100 form-control" type="text" formControlName="telegram" [ngClass]="{ 'is-invalid': submitted && f.telegram.errors }"
+                placeholder="Telegram account">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.telegram.errors" class="invalid-feedback">
+                <div *ngIf="f.telegram.errors.url">Not a valid URL</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="Not a valid URL">
+              <span class="label-input100">Github</span>
+              <input class="input100 form-control" type="text" formControlName="github" [ngClass]="{ 'is-invalid': submitted && f.github.errors }"
+                placeholder="Github account">
+              <span class="focus-input100" data-symbol="&#xf206;"></span>
+              <div *ngIf="submitted && f.github.errors" class="invalid-feedback">
+                <div *ngIf="f.github.errors.url">Not a valid URL</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input form-group" data-validate="">
+              <span class="label-input100">New password</span>
+              <input class="input100 form-control" type="password" formControlName="newPassword" [ngClass]="{ 'is-invalid': submitted && f.newPassword.errors }"
+                placeholder="Type your new password">
+              <span class="focus-input100" data-symbol="&#xf190;"></span>
+              <div *ngIf="submitted && f.newPassword.errors" class="invalid-feedback">
+                <div *ngIf="f.newPassword.errors.minlength">Password must be at least 6 characters</div>
+              </div>
+            </div>
+
+            <div class="wrap-input100 validate-input form-group" data-validate="">
+              <span class="label-input100">Retype new password</span>
+              <input class="input100 form-control" type="password" formControlName="newConfirmPassword" [ngClass]="{ 'is-invalid': submitted && f.newConfirmPassword.errors }"
+                placeholder="Retype your new password">
+              <span class="focus-input100" data-symbol="&#xf190;"></span>
+              <div *ngIf="submitted && f.newConfirmPassword.errors" class="invalid-feedback">
+                <div *ngIf="f.newConfirmPassword.errors?.Match">Password not match</div>
+              </div>
+            </div>
+
+            <div class="container-login100-form-btn">
+              <div class="wrap-login100-form-btn form-group">
+                <div class="login100-form-bgbtn"></div>
+                <button [hidden]="loading" class="login100-form-btn">
+                  Save
+                </button>
+              </div>
+              <img *ngIf="loading" align="center" src="assets/images/loading.gif" />
+            </div>
+          </form>
+
+          <hr>
+
+        </div>
+      </div>
+      <!--/tab-pane-->
+    </div>
+    <!--/tab-content-->
+
+  </div>
+  <!--/col-9-->
+</div>
+
+<!--/row-->

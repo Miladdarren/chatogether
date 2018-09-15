@@ -14,7 +14,8 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { CookieModule } from 'ngx-cookie';
-import { NavbarComponent } from './navbar/navbar.component';
+import { NavbarComponent } from './navbar';
+import { ProfileComponent } from './profile';
 
 @NgModule({
     imports: [
@@ -30,7 +31,8 @@ import { NavbarComponent } from './navbar/navbar.component';
         HomeComponent,
         LoginComponent,
         RegisterComponent,
-        NavbarComponent
+        NavbarComponent,
+        ProfileComponent
     ],
     providers: [
         AuthGuard,

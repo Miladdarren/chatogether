@@ -6,25 +6,25 @@ import { User } from '../_models';
 
 @Injectable()
 export class UserService {
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-  getAll() {
-    return this.http.get<User[]>(`${environment.apiUrl}/users/all`);
-  }
+    getAll() {
+        return this.http.get<User[]>(`${environment.apiUrl}/users/all`);
+    }
 
-  getById(id: number) {
-    return this.http.get(`${environment.apiUrl}/users/` + id);
-  }
+    getProfile() {
+        return this.http.get(`${environment.apiUrl}/users/current`);
+    }
 
-  register(user: User) {
-    return this.http.post(`${environment.apiUrl}/auth/register`, user);
-  }
+    register(user: User) {
+        return this.http.post(`${environment.apiUrl}/auth/register`, user);
+    }
 
-  update(user: User) {
-    return this.http.put(`${environment.apiUrl}/users/` + user.id, user);
-  }
+    updateProfile(user: User) {
+        return this.http.patch(`${environment.apiUrl}/users/current`, user);
+    }
 
-  delete(id: number) {
-    return this.http.delete(`${environment.apiUrl}/users/` + id);
-  }
+    delete(id: number) {
+        return this.http.delete(`${environment.apiUrl}/users/` + id);
+    }
 }

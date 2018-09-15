@@ -22,7 +22,7 @@
                 <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/login">Login</a></li>
                 <li *ngIf="!authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/register">Register</a></li>
                 <li *ngIf="authenticationService.loggedIn()" routerLinkActive="active"><a routerLink="/profile">Profile</a></li>
-                <li *ngIf="authenticationService.loggedIn()"><a href="#" (click)="onLogoutClick()">Logout</a></li>
+                <li *ngIf="authenticationService.loggedIn()"><a routerLink="/" (click)="onLogoutClick()">Logout</a></li>
             </ul>
         </div><!-- /.container-fluid -->
     </nav>
