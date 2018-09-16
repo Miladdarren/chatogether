@@ -2,8 +2,7 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { PasswordValidation } from '../_helpers';
-
+import PasswordValidation from '../_helpers/passwordValidation';
 import { AlertService, UserService } from '../_services';
 
 @Component({ templateUrl: 'register.component.html' })
@@ -20,19 +19,17 @@ export class RegisterComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.registerForm = this.formBuilder.group(
-            {
-                firstName: ['', Validators.required],
-                lastName: ['', Validators.required],
-                username: ['', [Validators.required, Validators.minLength(3)]],
-                email: ['', [Validators.required, Validators.email]],
-                password: ['', [Validators.required, Validators.minLength(6)]],
-                confirmPassword: ['', Validators.required]
-            },
-            {
-                validator: PasswordValidation.Match
-            }
-        );
+        this.registerForm = this.formBuilder.group({
+            firstName: ['', Validators.required],
+            lastName: ['', Validators.required],
+            username: ['', [Validators.required, Validators.minLength(3)]],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+            confirmPassword: [
+                '',
+                [Validators.required, PasswordValidation('password')]
+            ]
+        });
     }
 
     // convenience getter for easy access to form fields

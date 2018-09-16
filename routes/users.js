@@ -159,7 +159,7 @@ router.patch(
                     profile.social.telegram = req.body.telegram;
                 if (req.body.github) profile.social.github = req.body.github;
 
-                // Password reset
+                // Password change
                 if (req.body.newPassword && req.body.newConfirmPassword) {
                     // Synchronous password hashing
                     profile.password = bcrypt.hashSync(

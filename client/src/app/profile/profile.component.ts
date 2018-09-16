@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { PasswordValidation } from '../_helpers';
+import PasswordValidation from '../_helpers/passwordValidation';
 import { AlertService, UserService } from '../_services';
 
 @Component({
@@ -27,36 +27,31 @@ export class ProfileComponent implements OnInit {
             user => {
                 this.user = user;
 
-                this.profileForm = this.formBuilder.group(
-                    {
-                        currentPassword: ['', Validators.required],
-                        firstName: [
-                            this.user.firstName,
-                            [Validators.required, Validators.minLength(3)]
-                        ],
-                        lastName: [
-                            this.user.lastName,
-                            [Validators.required, Validators.minLength(3)]
-                        ],
-                        username: [
-                            this.user.username,
-                            [Validators.required, Validators.minLength(3)]
-                        ],
-                        email: [
-                            this.user.email,
-                            [Validators.required, Validators.email]
-                        ],
-                        instagram: [this.user.social.instagram],
-                        linkedin: [this.user.social.linkedin],
-                        telegram: [this.user.social.telegram],
-                        github: [this.user.social.github],
-                        newPassword: ['', Validators.minLength(6)],
-                        newConfirmPassword: ['']
-                    },
-                    {
-                        validator: PasswordValidation.Match
-                    }
-                );
+                this.profileForm = this.formBuilder.group({
+                    currentPassword: ['', Validators.required],
+                    firstName: [
+                        this.user.firstName,
+                        [Validators.required, Validators.minLength(3)]
+                    ],
+                    lastName: [
+                        this.user.lastName,
+                        [Validators.required, Validators.minLength(3)]
+                    ],
+                    username: [
+                        this.user.username,
+                        [Validators.required, Validators.minLength(3)]
+                    ],
+                    email: [
+                        this.user.email,
+                        [Validators.required, Validators.email]
+                    ],
+                    instagram: [this.user.social.instagram],
+                    linkedin: [this.user.social.linkedin],
+                    telegram: [this.user.social.telegram],
+                    github: [this.user.social.github],
+                    newPassword: ['', Validators.minLength(6)],
+                    newConfirmPassword: ['', PasswordValidation('newPassword')]
+                });
             },
             err => {
                 return false;
