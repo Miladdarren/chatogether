@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 import { environment } from '../../environments/environment';
 import { User } from '../_models';

@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { FileUploader } from 'ng2-file-upload';
+
 import PasswordValidation from '../_helpers/passwordValidation';
 import { AlertService, UserService } from '../_services';
+import { environment } from '../../environments/environment';
+import { Cookies } from '../_helpers';
 
 @Component({
     selector: 'app-profile',
@@ -14,12 +18,18 @@ export class ProfileComponent implements OnInit {
     user: any;
     loading = false;
     submitted = false;
+    uploader: FileUploader = new FileUploader({
+        url: `${environment.apiUrl}/users/uploadpic`,
+        itemAlias: 'photo',
+        authToken: this.cookies.getAccessToken()
+    });
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private userService: UserService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private cookies: Cookies
     ) {}
 
     ngOnInit() {
@@ -57,6 +67,26 @@ export class ProfileComponent implements OnInit {
                 return false;
             }
         );
+
+        this.uploader.onCompleteItem = (
+            item: any,
+            response: any,
+            status: any,
+            headers: any
+        ) => {
+            response = JSON.parse(response);
+            if (!response.success) {
+                window.scrollTo(0, 0);
+                this.alertService.error(
+                    'Profile picture must be a PNG or JPEG less than 1 MB'
+                );
+                this.loading = false;
+                return;
+            }
+            this.router
+                .navigate(['/refresh'])
+                .then(() => this.router.navigate(['/profile']));
+        };
     }
 
     // convenience getter for easy access to form fields
@@ -98,13 +128,12 @@ export class ProfileComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 user => {
-                    this.alertService.success(
-                        'Profile updated successfully',
-                        true
-                    );
-                    this.router.navigate(['/']);
+                    this.router
+                        .navigate(['/refresh'])
+                        .then(() => this.router.navigate(['/profile']));
                 },
                 error => {
+                    window.scrollTo(0, 0);
                     this.alertService.error(error);
                     this.loading = false;
                 }

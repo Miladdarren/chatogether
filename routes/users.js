@@ -5,10 +5,15 @@ const bcrypt = require('bcryptjs');
 const keys = require('../config/keys');
 const mongoose = require('mongoose');
 const { sendError } = require('../libs/utilities');
+const fs = require('fs');
+const async = require('async');
 
 // Validator configuration
 const validate = require('express-validation');
 const validation = require('../validation/index');
+
+// User profile pic upload config
+const picUpload = require('../config/picUpload');
 
 // Load User model
 const User = require('../models/User');
@@ -19,6 +24,8 @@ errMessages.server = 'Server Problem';
 errMessages.noUsers = 'There are no users registered yet!';
 errMessages.noUser = 'No user found';
 errMessages.badCurrentPassword = 'Incorrect current password';
+errMessages.usernameExist = 'Username already exist!';
+errMessages.emailExist = 'Email already exist!';
 
 // @route  GET users/current
 // @desc   Return current logged in user
@@ -138,46 +145,165 @@ router.patch(
 
                 // Password matched //
 
-                const profile = {};
+                // Search for existing username or email //
+                async.series([
+                    // Check for existing username
+                    callback => {
+                        if (req.body.username !== req.user.username) {
+                            User.findOne({
+                                username: req.body.username
+                            }).then(user => {
+                                // Username exist
+                                if (user) {
+                                    sendError(
+                                        res,
+                                        400,
+                                        errMessages.usernameExist
+                                    );
+                                    callback(errMessages.usernameExist);
+                                } else callback();
+                            });
+                        } else callback();
+                    },
+                    // Check for existing email
+                    callback => {
+                        if (req.body.email !== req.user.email) {
+                            User.findOne({ email: req.body.email }).then(
+                                user => {
+                                    // Email exist
+                                    if (user) {
+                                        sendError(
+                                            res,
+                                            400,
+                                            errMessages.emailExist
+                                        );
+                                        callback(errMessages.emailExist);
+                                    } else callback();
+                                }
+                            );
+                        } else callback();
+                    },
+                    // Username and email do not exist so upadate the user
+                    callback => {
+                        const profile = {};
 
-                // Required fields
-                profile.firstName = req.body.firstName;
-                profile.lastName = req.body.lastName;
-                profile.username = req.body.username;
-                profile.email = req.body.email;
+                        // Required fields
+                        profile.firstName = req.body.firstName;
+                        profile.lastName = req.body.lastName;
+                        profile.username = req.body.username;
+                        profile.email = req.body.email;
 
-                // Optional fields
-                if (req.body.avatar) profile.avatar = req.body.avatar;
+                        // Optional fields
+                        if (req.body.avatar) profile.avatar = req.body.avatar;
 
-                // Social
-                profile.social = {};
-                if (req.body.linkedin)
-                    profile.social.linkedin = req.body.linkedin;
-                if (req.body.instagram)
-                    profile.social.instagram = req.body.instagram;
-                if (req.body.telegram)
-                    profile.social.telegram = req.body.telegram;
-                if (req.body.github) profile.social.github = req.body.github;
+                        // Social
+                        profile.social = {};
+                        if (req.body.linkedin)
+                            profile.social.linkedin = req.body.linkedin;
+                        if (req.body.instagram)
+                            profile.social.instagram = req.body.instagram;
+                        if (req.body.telegram)
+                            profile.social.telegram = req.body.telegram;
+                        if (req.body.github)
+                            profile.social.github = req.body.github;
 
-                // Password change
-                if (req.body.newPassword && req.body.newConfirmPassword) {
-                    // Synchronous password hashing
-                    profile.password = bcrypt.hashSync(
-                        req.body.newPassword,
-                        keys.saltFactor
-                    );
-                }
+                        // Password change
+                        if (
+                            req.body.newPassword &&
+                            req.body.newConfirmPassword
+                        ) {
+                            // Synchronous password hashing
+                            profile.password = bcrypt.hashSync(
+                                req.body.newPassword,
+                                keys.saltFactor
+                            );
+                        }
 
-                // Update user
-                User.findByIdAndUpdate(
-                    req.user.id,
-                    { $set: profile },
-                    { new: true }
-                )
-                    .then(user => res.json(user))
-                    .catch(err => {
-                        sendError(res, 500, errMessages.server, err);
-                    });
+                        // Update user
+                        User.findByIdAndUpdate(
+                            req.user.id,
+                            { $set: profile },
+                            { new: true }
+                        )
+                            .then(user => {
+                                res.json(user);
+                                callback();
+                            })
+                            .catch(err => {
+                                sendError(res, 500, errMessages.server, err);
+                                callback();
+                            });
+                    }
+                ]);
+
+                // Check for existing username
+                // if (req.body.username !== req.user.username) {
+                //     const usernameQuery = User.find({
+                //         username: req.body.username
+                //     });
+                //     const usernameResult = usernameQuery.exec();
+
+                //     // Username exist
+                //     if (usernameResult) {
+                //         return sendError(res, 400, errMessages.usernameExist);
+                //     }
+                // }
+
+                // // Check for existing email
+                // if (req.body.email !== req.user.email) {
+                //     const emailQuery = User.find({
+                //         email: req.body.email
+                //     });
+                //     const emailResult = emailQuery.exec();
+
+                //     // Email exist
+                //     if (!emailResult) {
+                //         return sendError(res, 400, errMessages.emailExist);
+                //     }
+                // }
+
+                // Username and email do not exist so upadate the user
+
+                // const profile = {};
+
+                // // Required fields
+                // profile.firstName = req.body.firstName;
+                // profile.lastName = req.body.lastName;
+                // profile.username = req.body.username;
+                // profile.email = req.body.email;
+
+                // // Optional fields
+                // if (req.body.avatar) profile.avatar = req.body.avatar;
+
+                // // Social
+                // profile.social = {};
+                // if (req.body.linkedin)
+                //     profile.social.linkedin = req.body.linkedin;
+                // if (req.body.instagram)
+                //     profile.social.instagram = req.body.instagram;
+                // if (req.body.telegram)
+                //     profile.social.telegram = req.body.telegram;
+                // if (req.body.github) profile.social.github = req.body.github;
+
+                // // Password change
+                // if (req.body.newPassword && req.body.newConfirmPassword) {
+                //     // Synchronous password hashing
+                //     profile.password = bcrypt.hashSync(
+                //         req.body.newPassword,
+                //         keys.saltFactor
+                //     );
+                // }
+
+                // // Update user
+                // User.findByIdAndUpdate(
+                //     req.user.id,
+                //     { $set: profile },
+                //     { new: true }
+                // )
+                //     .then(user => res.json(user))
+                //     .catch(err => {
+                //         sendError(res, 500, errMessages.server, err);
+                //     });
             });
     }
 );
@@ -248,6 +374,41 @@ router.delete(
             .catch(err => {
                 sendError(res, 500, errMessages.server, err);
             });
+    }
+);
+
+// @route  POST users/uploadpic
+// @desc   Upload user profile picture
+// @access Private
+router.post(
+    '/uploadpic',
+    passport.authenticate('jwt', { session: false }),
+    picUpload,
+    (req, res) => {
+        if (!req.file) {
+            return res.status(422).json({ success: false });
+        } else {
+            const profile = {};
+            profile.avatar = req.file.filename;
+
+            // Deleting previous user photo if exist
+            if (req.user.avatar !== '') {
+                fs.unlink('profilePics/' + req.user.avatar, err => {
+                    if (err) console.log(err);
+                });
+            }
+
+            // Update user avatar
+            User.findByIdAndUpdate(
+                req.user.id,
+                { $set: profile },
+                { new: true }
+            )
+                .then(() => res.json({ success: true }))
+                .catch(err => {
+                    sendError(res, 500, errMessages.server, err);
+                });
+        }
     }
 );
 

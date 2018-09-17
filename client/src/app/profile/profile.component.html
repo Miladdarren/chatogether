@@ -13,9 +13,21 @@
     <div class="col-sm-3">
       <!--left col-->
       <div class="text-center">
-        <img src="{{user.avatar}}" class="avatar img-circle img-thumbnail" alt="avatar">
+        <img *ngIf="user.avatar" src="{{user.avatar}}" class="avatar img-circle img-thumbnail" alt="avatar">
+        <img *ngIf="!user.avatar" src="assets/images/user.png" class="avatar img-circle img-thumbnail" alt="avatar">
         <h6>Upload your photo...</h6>
-        <input type="file" class="text-center center-block file-upload">
+        <label class="btn btn-primary">
+          Browse <input type="file" style="display:none" name="photo" ng2FileSelect [uploader]="uploader" onchange="$('#upload-file-info').html(this.files[0].name)"
+            hidden>
+        </label>
+        <span class='label label-info' id="upload-file-info"></span>
+
+        <div class="wrap-login100-form-btn">
+          <div class="login100-form-bgbtn"></div>
+          <button class="login100-form-btn" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+            Change photo
+          </button>
+        </div>
       </div>
       <hr><br>
 
