@@ -24,9 +24,10 @@
 
         <div class="wrap-login100-form-btn">
           <div class="login100-form-bgbtn"></div>
-          <button class="login100-form-btn" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+          <button [hidden]="loading" class="login100-form-btn" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
             Change photo
           </button>
+          <img *ngIf="loading" align="center" src="assets/images/loading.gif" />
         </div>
       </div>
       <hr><br>

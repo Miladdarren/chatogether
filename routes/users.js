@@ -63,7 +63,7 @@ router.get(
                     return sendError(res, 404, errMessages.noUsers);
                 }
 
-                res.json(users);
+                res.json({ success: true, users: users });
             })
             .catch(err => {
                 sendError(res, 500, errMessages.server, err);
@@ -235,75 +235,6 @@ router.patch(
                             });
                     }
                 ]);
-
-                // Check for existing username
-                // if (req.body.username !== req.user.username) {
-                //     const usernameQuery = User.find({
-                //         username: req.body.username
-                //     });
-                //     const usernameResult = usernameQuery.exec();
-
-                //     // Username exist
-                //     if (usernameResult) {
-                //         return sendError(res, 400, errMessages.usernameExist);
-                //     }
-                // }
-
-                // // Check for existing email
-                // if (req.body.email !== req.user.email) {
-                //     const emailQuery = User.find({
-                //         email: req.body.email
-                //     });
-                //     const emailResult = emailQuery.exec();
-
-                //     // Email exist
-                //     if (!emailResult) {
-                //         return sendError(res, 400, errMessages.emailExist);
-                //     }
-                // }
-
-                // Username and email do not exist so upadate the user
-
-                // const profile = {};
-
-                // // Required fields
-                // profile.firstName = req.body.firstName;
-                // profile.lastName = req.body.lastName;
-                // profile.username = req.body.username;
-                // profile.email = req.body.email;
-
-                // // Optional fields
-                // if (req.body.avatar) profile.avatar = req.body.avatar;
-
-                // // Social
-                // profile.social = {};
-                // if (req.body.linkedin)
-                //     profile.social.linkedin = req.body.linkedin;
-                // if (req.body.instagram)
-                //     profile.social.instagram = req.body.instagram;
-                // if (req.body.telegram)
-                //     profile.social.telegram = req.body.telegram;
-                // if (req.body.github) profile.social.github = req.body.github;
-
-                // // Password change
-                // if (req.body.newPassword && req.body.newConfirmPassword) {
-                //     // Synchronous password hashing
-                //     profile.password = bcrypt.hashSync(
-                //         req.body.newPassword,
-                //         keys.saltFactor
-                //     );
-                // }
-
-                // // Update user
-                // User.findByIdAndUpdate(
-                //     req.user.id,
-                //     { $set: profile },
-                //     { new: true }
-                // )
-                //     .then(user => res.json(user))
-                //     .catch(err => {
-                //         sendError(res, 500, errMessages.server, err);
-                //     });
             });
     }
 );

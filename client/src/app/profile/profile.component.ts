@@ -3,15 +3,16 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { FileUploader } from 'ng2-file-upload';
+import { CookieService } from 'ngx-cookie';
 
 import PasswordValidation from '../_helpers/passwordValidation';
 import { AlertService, UserService } from '../_services';
 import { environment } from '../../environments/environment';
-import { Cookies } from '../_helpers';
 
 @Component({
     selector: 'app-profile',
-    templateUrl: './profile.component.html'
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
     profileForm: FormGroup;
@@ -21,7 +22,7 @@ export class ProfileComponent implements OnInit {
     uploader: FileUploader = new FileUploader({
         url: `${environment.apiUrl}/users/uploadpic`,
         itemAlias: 'photo',
-        authToken: this.cookies.getAccessToken()
+        authToken: this.cookieService.get('accessToken')
     });
 
     constructor(
@@ -29,7 +30,7 @@ export class ProfileComponent implements OnInit {
         private router: Router,
         private userService: UserService,
         private alertService: AlertService,
-        private cookies: Cookies
+        private cookieService: CookieService
     ) {}
 
     ngOnInit() {

@@ -2,6 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie';
+import * as jwt_decode from 'jwt-decode';
 
 import { environment } from '../../environments/environment';
 
@@ -35,5 +36,11 @@ export class AuthenticationService {
     logout() {
         // remove user from cookie to log user out
         this.cookieService.remove('accessToken');
+    }
+
+    getUserData(): any {
+        const decodedUser = jwt_decode(this.cookieService.get('accessToken'));
+
+        return decodedUser;
     }
 }

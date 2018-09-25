@@ -7,6 +7,8 @@
 const app = require('../server');
 const debug = require('debug')('cool:server');
 const http = require('http');
+const connectMongo = require('../config/db');
+const io = require('../libs/io');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +22,18 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+
+/**
+ * Connect to mongoDB.
+ */
+
+connectMongo();
+
+/**
+ * Connect to Socket.io
+ */
+
+io(server);
 
 /**
  * Listen on provided port, on all network interfaces.

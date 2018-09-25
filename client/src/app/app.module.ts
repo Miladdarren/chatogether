@@ -10,15 +10,22 @@ import { routing } from './app.routing';
 import { AlertComponent } from './_directives';
 import { AuthGuard } from './_guards';
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
-import { AlertService, AuthenticationService, UserService } from './_services';
+import {
+    AlertService,
+    AuthenticationService,
+    UserService,
+    ChatService
+} from './_services';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { CookieModule } from 'ngx-cookie';
 import { NavbarComponent } from './navbar';
 import { ProfileComponent } from './profile';
-import { Cookies } from './_helpers';
 import { RefreshComponent } from './refresh/refresh.component';
+import { ChatRoomComponent } from './chat-room';
+import { ActiveListComponent } from './active-list';
+import { MessageComponent } from './message';
 
 @NgModule({
     imports: [
@@ -37,7 +44,10 @@ import { RefreshComponent } from './refresh/refresh.component';
         RegisterComponent,
         NavbarComponent,
         ProfileComponent,
-        RefreshComponent
+        RefreshComponent,
+        ChatRoomComponent,
+        ActiveListComponent,
+        MessageComponent
     ],
     providers: [
         AuthGuard,
@@ -46,7 +56,7 @@ import { RefreshComponent } from './refresh/refresh.component';
         UserService,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        Cookies
+        ChatService
     ],
     bootstrap: [AppComponent]
 })

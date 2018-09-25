@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AuthenticationService } from '../_services';
-// import { ChatService } from '../../services/chat.service';
+import { ChatService } from '../_services/chat.service';
 
 @Component({
     selector: 'app-navbar',
@@ -10,14 +11,17 @@ import { AuthenticationService } from '../_services';
 })
 export class NavbarComponent implements OnInit {
     constructor(
-        public authenticationService: AuthenticationService /*, private chatService: ChatService */
+        public authenticationService: AuthenticationService,
+        private chatService: ChatService,
+        private router: Router
     ) {}
 
     ngOnInit() {}
 
     onLogoutClick(): boolean {
-        // this.chatService.disconnect();
+        this.chatService.disconnect();
         this.authenticationService.logout();
+        this.router.navigate(['/']);
         return false;
     }
 }
