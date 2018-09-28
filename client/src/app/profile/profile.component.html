@@ -48,16 +48,6 @@
         <div class="tab-pane active">
           <hr>
           <form class="login100-form validate-form" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-            <div class="wrap-input100 validate-input form-group" data-validate="Current password is required">
-              <span class="label-input100">In order to edit your profile you need to enter your current password</span>
-              <input class="input100 form-control" type="password" formControlName="currentPassword" [ngClass]="{ 'is-invalid': submitted && f.currentPassword.errors }"
-                placeholder="Type your current password">
-              <span class="focus-input100" data-symbol="&#xf190;"></span>
-              <div *ngIf="submitted && f.currentPassword.errors" class="invalid-feedback">
-                <div *ngIf="f.currentPassword.errors.required">Current assword is required</div>
-              </div>
-            </div>
-
             <div class="wrap-input100 validate-input m-b-23 form-group" data-validate="First name is required">
               <span class="label-input100">First Name</span>
               <input class="input100 form-control" type="text" formControlName="firstName" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
@@ -138,6 +128,13 @@
               <div *ngIf="submitted && f.github.errors" class="invalid-feedback">
                 <div *ngIf="f.github.errors.url">Not a valid URL</div>
               </div>
+            </div>
+
+            <div class="wrap-input100 validate-input form-group" data-validate="Current password is required">
+              <span class="label-input100">In order to change your password you need to enter your current password</span>
+              <input class="input100 form-control" type="password" formControlName="currentPassword" [ngClass]="{ 'is-invalid': submitted && f.currentPassword.errors }"
+                placeholder="Type your current password">
+              <span class="focus-input100" data-symbol="&#xf190;"></span>
             </div>
 
             <div class="wrap-input100 validate-input form-group" data-validate="">

@@ -39,7 +39,6 @@ export class ProfileComponent implements OnInit {
                 this.user = user;
 
                 this.profileForm = this.formBuilder.group({
-                    currentPassword: ['', Validators.required],
                     firstName: [
                         this.user.firstName,
                         [Validators.required, Validators.minLength(3)]
@@ -60,6 +59,7 @@ export class ProfileComponent implements OnInit {
                     linkedin: [this.user.social.linkedin],
                     telegram: [this.user.social.telegram],
                     github: [this.user.social.github],
+                    currentPassword: [''],
                     newPassword: ['', Validators.minLength(6)],
                     newConfirmPassword: ['', PasswordValidation('newPassword')]
                 });

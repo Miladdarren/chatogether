@@ -134,108 +134,97 @@ router.patch(
     passport.authenticate('jwt', { session: false }),
     validate(validation.userUpdate),
     (req, res) => {
-        // Check current password
-        bcrypt
-            .compare(req.body.currentPassword, req.user.password)
-            .then(isMatch => {
-                // Password does not match
-                if (!isMatch) {
-                    return sendError(res, 400, errMessages.badCurrentPassword);
-                }
-
-                // Password matched //
-
-                // Search for existing username or email //
-                async.series([
-                    // Check for existing username
-                    callback => {
-                        if (req.body.username !== req.user.username) {
-                            User.findOne({
-                                username: req.body.username
-                            }).then(user => {
-                                // Username exist
-                                if (user) {
-                                    sendError(
-                                        res,
-                                        400,
-                                        errMessages.usernameExist
-                                    );
-                                    callback(errMessages.usernameExist);
-                                } else callback();
-                            });
+        const profile = {};
+        async.series([
+            // Check for existing username
+            callback => {
+                if (req.body.username !== req.user.username) {
+                    User.findOne({
+                        username: req.body.username
+                    }).then(user => {
+                        // Username exist
+                        if (user) {
+                            sendError(res, 400, errMessages.usernameExist);
+                            callback(errMessages.usernameExist);
                         } else callback();
-                    },
-                    // Check for existing email
-                    callback => {
-                        if (req.body.email !== req.user.email) {
-                            User.findOne({ email: req.body.email }).then(
-                                user => {
-                                    // Email exist
-                                    if (user) {
-                                        sendError(
-                                            res,
-                                            400,
-                                            errMessages.emailExist
-                                        );
-                                        callback(errMessages.emailExist);
-                                    } else callback();
-                                }
-                            );
+                    });
+                } else callback();
+            },
+            // Check for existing email
+            callback => {
+                if (req.body.email !== req.user.email) {
+                    User.findOne({ email: req.body.email }).then(user => {
+                        // Email exist
+                        if (user) {
+                            sendError(res, 400, errMessages.emailExist);
+                            callback(errMessages.emailExist);
                         } else callback();
-                    },
-                    // Username and email do not exist so upadate the user
-                    callback => {
-                        const profile = {};
-
-                        // Required fields
-                        profile.firstName = req.body.firstName;
-                        profile.lastName = req.body.lastName;
-                        profile.username = req.body.username;
-                        profile.email = req.body.email;
-
-                        // Optional fields
-                        if (req.body.avatar) profile.avatar = req.body.avatar;
-
-                        // Social
-                        profile.social = {};
-                        if (req.body.linkedin)
-                            profile.social.linkedin = req.body.linkedin;
-                        if (req.body.instagram)
-                            profile.social.instagram = req.body.instagram;
-                        if (req.body.telegram)
-                            profile.social.telegram = req.body.telegram;
-                        if (req.body.github)
-                            profile.social.github = req.body.github;
-
-                        // Password change
-                        if (
-                            req.body.newPassword &&
-                            req.body.newConfirmPassword
-                        ) {
-                            // Synchronous password hashing
-                            profile.password = bcrypt.hashSync(
-                                req.body.newPassword,
-                                keys.saltFactor
-                            );
-                        }
-
-                        // Update user
-                        User.findByIdAndUpdate(
-                            req.user.id,
-                            { $set: profile },
-                            { new: true }
-                        )
-                            .then(user => {
-                                res.json(user);
+                    });
+                } else callback();
+            },
+            // Changing password
+            callback => {
+                if (req.body.newPassword && req.body.newConfirmPassword) {
+                    // Check current password
+                    bcrypt
+                        .compare(req.body.currentPassword, req.user.password)
+                        .then(isMatch => {
+                            // Password does not match
+                            if (!isMatch) {
+                                sendError(
+                                    res,
+                                    400,
+                                    errMessages.badCurrentPassword
+                                );
+                                callback(errMessages.badCurrentPassword);
+                            } else {
+                                // Synchronous password hashing
+                                profile.password = bcrypt.hashSync(
+                                    req.body.newPassword,
+                                    keys.saltFactor
+                                );
                                 callback();
-                            })
-                            .catch(err => {
-                                sendError(res, 500, errMessages.server, err);
-                                callback();
-                            });
-                    }
-                ]);
-            });
+                            }
+                        });
+                } else callback();
+            },
+            // Username and email do not exist so upadate the user
+            callback => {
+                // Required fields
+                profile.firstName = req.body.firstName;
+                profile.lastName = req.body.lastName;
+                profile.username = req.body.username;
+                profile.email = req.body.email;
+
+                // Optional fields
+                if (req.body.avatar) profile.avatar = req.body.avatar;
+
+                // Social
+                profile.social = {};
+                if (req.body.linkedin)
+                    profile.social.linkedin = req.body.linkedin;
+                if (req.body.instagram)
+                    profile.social.instagram = req.body.instagram;
+                if (req.body.telegram)
+                    profile.social.telegram = req.body.telegram;
+                if (req.body.github) profile.social.github = req.body.github;
+
+                // Update user
+                User.findByIdAndUpdate(
+                    req.user.id,
+                    { $set: profile },
+                    { new: true }
+                )
+                    .then(user => {
+                        res.json(user);
+                        callback();
+                    })
+                    .catch(err => {
+                        sendError(res, 500, errMessages.server, err);
+                        callback();
+                    });
+            }
+        ]);
     }
 );
 

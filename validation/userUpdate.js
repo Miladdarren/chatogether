@@ -44,7 +44,7 @@ module.exports = {
             .string()
             .trim()
             .optional(),
-        currentPassword: joi.required(),
+        currentPassword: joi.optional(),
         newPassword: joi
             .string()
             .min(5)
