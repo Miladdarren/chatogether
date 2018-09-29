@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as moment from 'moment';
 
+import { AuthenticationService } from '../_services/authentication.service';
 import { Message } from '../_models/message';
 
 @Component({
@@ -13,8 +14,9 @@ export class MessageComponent implements OnInit {
     message: Message;
     time: string;
     fadeTime: boolean;
+    user: any;
 
-    constructor() {}
+    constructor(private authenticationService: AuthenticationService) {}
 
     ngOnInit() {
         setTimeout(() => {
@@ -24,6 +26,8 @@ export class MessageComponent implements OnInit {
         setInterval(() => {
             this.updateFromNow();
         }, 60000);
+
+        this.user = this.authenticationService.getUserData();
     }
 
     updateFromNow(): void {

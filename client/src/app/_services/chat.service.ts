@@ -47,7 +47,9 @@ export class ChatService {
     }
 
     disconnect(): void {
-        this.socket.disconnect();
+        if (this.socket) {
+            this.socket.disconnect();
+        }
     }
 
     getConversation(name1: string, name2: string): any {

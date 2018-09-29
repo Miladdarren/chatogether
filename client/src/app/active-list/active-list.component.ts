@@ -12,6 +12,7 @@ export class ActiveListComponent implements OnInit {
     current: string;
     @Output()
     newConv = new EventEmitter<string>();
+    user: any;
 
     constructor() {}
 
