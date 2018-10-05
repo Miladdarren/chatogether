@@ -52,10 +52,10 @@ export class ChatService {
         }
     }
 
-    getConversation(name1: string, name2: string): any {
+    getConversation(user1: string, user2: string): any {
         let url = this.apiUrl;
-        if (name2 != 'chat-room') {
-            const route = '/' + name1 + '/' + name2;
+        if (user2 != 'chat-room') {
+            const route = '/' + user1 + '/' + user2;
             url += route;
         }
 

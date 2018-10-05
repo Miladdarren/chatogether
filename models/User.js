@@ -74,9 +74,4 @@ const UserSchema = new Schema(
     { timestamps: true }
 );
 
-UserSchema.statics.getUserByUsername = (username, callback) => {
-    return User.findOne({ username: username }, callback);
-};
-
-const User = mongoose.model('User', UserSchema);
-module.exports = User;
+module.exports = mongoose.model('User', UserSchema);

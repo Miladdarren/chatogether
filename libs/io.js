@@ -93,8 +93,8 @@ const initialize = server => {
             );
 
             // save the message to the database
-            let message = new Message(data.message);
-            Message.addMessage(message, (err, newMsg) => {});
+            let newMessage = new Message(data.message);
+            newMessage.save().catch(err => console.log(err));
         });
 
         socket.on('disconnect', () => {
