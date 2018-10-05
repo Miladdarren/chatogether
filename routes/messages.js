@@ -55,50 +55,45 @@ router.get(
     }
 );
 
-// @route  GET messages/:user1/:user2
+// @route  GET messages/:chatWith
 // @desc   Get private conversation
 // @access Private
 router.get(
-    '/:user1/:user2',
+    '/:chatWith',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
         const response = { success: true };
 
-        const combo1 = '' + req.params.user1 + '-' + req.params.user2;
-        const combo2 = '' + req.params.user2 + '-' + req.params.user1;
+        const combo1 = '' + req.user.username + '-' + req.params.chatWith;
+        const combo2 = '' + req.params.chatWith + '-' + req.user.username;
 
         Conversation.findOne()
             .or([{ name: combo1 }, { name: combo2 }])
             .then(conversation => {
                 // Conversation does not exist so create it
                 if (!conversation) {
-                    User.find()
-                        .or([
-                            { username: req.params.user1 },
-                            { username: req.params.user2 }
-                        ])
-                        .then(users => {
-                            // User1 or user2 does not exist
-                            if (users.length !== 2) {
+                    User.findOne({ username: req.params.chatWith })
+                        .then(user => {
+                            // Specified user does not exist
+                            if (!user) {
                                 response.success = false;
-                                return res.json(response);
+                                return res.status(404).json(response);
                             }
 
-                            // Both users exist
-                            const mihai1 = {
-                                id: users[0]._id,
-                                username: users[0].username
+                            // Specified user exist
+                            const user1 = {
+                                id: req.user._id,
+                                username: req.user.username
                             };
-                            const mihai2 = {
-                                id: users[1]._id,
-                                username: users[1].username
+                            const user2 = {
+                                id: user._id,
+                                username: user.username
                             };
-                            const participants = [mihai1, mihai2];
+                            const participants = [user1, user2];
 
                             const newConv = new Conversation({
                                 participants: participants,
-                                name:
-                                    '' + mihai1.username + '-' + mihai2.username
+                                name: '' + user1.username + '-' + user2.username
                             });
 
                             newConv
@@ -110,10 +105,14 @@ router.get(
                                 .catch(err => {
                                     console.log(err);
                                     response.success = false;
-                                    res.json(response);
+                                    res.status(500).json(response);
                                 });
                         })
-                        .catch(err => console.log(err));
+                        .catch(err => {
+                            console.log(err);
+                            response.success = false;
+                            res.status(500).json(response);
+                        });
                 } else {
                     // Conversation exist so fetch its messages
                     Message.find({ conversationId: conversation._id })

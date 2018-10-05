@@ -71,29 +71,27 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         }
     }
 
-    getMessages(name: string): void {
-        this.chatService
-            .getConversation(this.username, name)
-            .subscribe(data => {
-                if (data.success == true) {
-                    this.conversationId =
-                        data.conversation._id || data.conversation._doc._id;
-                    const messages = data.conversation.messages || null;
-                    if (messages && messages.length > 0) {
-                        for (const message of messages) {
-                            this.checkMine(message);
-                        }
-                        this.noMsg = false;
-                        this.messageList = messages;
-                        this.scrollToBottom();
-                    } else {
-                        this.noMsg = true;
-                        this.messageList = [];
+    getMessages(chatWith: string): void {
+        this.chatService.getConversation(chatWith).subscribe(data => {
+            if (data.success == true) {
+                this.conversationId =
+                    data.conversation._id || data.conversation._doc._id;
+                const messages = data.conversation.messages || null;
+                if (messages && messages.length > 0) {
+                    for (const message of messages) {
+                        this.checkMine(message);
                     }
+                    this.noMsg = false;
+                    this.messageList = messages;
+                    this.scrollToBottom();
                 } else {
-                    this.onNewConv('chat-room');
+                    this.noMsg = true;
+                    this.messageList = [];
                 }
-            });
+            } else {
+                this.onNewConv('chat-room');
+            }
+        });
     }
 
     getUserList(): void {
