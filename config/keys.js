@@ -19,6 +19,7 @@ module.exports = {
     cookieOptions: {
         expires: new Date(Date.now() + 3600000)
     },
+    redisExpiration: 86400,
     googleAuth: {
         clientID: googleClientID,
         clientSecret: googleClientSecret,

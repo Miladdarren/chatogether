@@ -17,6 +17,7 @@ module.exports = passport => {
     passport.use(
         new JwtStrategy(opts, (jwt_payload, done) => {
             User.findById(jwt_payload.id)
+                .cache(jwt_payload.id)
                 .then(user => {
                     if (user) {
                         return done(null, user);
@@ -38,7 +39,6 @@ module.exports = passport => {
                 // Make the code asynchronous
                 // User.findOne won't fire until we have all our data back from Google
                 process.nextTick(() => {
-                    console.log(profile);
                     const firstName = profile.name.givenName;
                     const lastName = profile.name.familyName;
                     const email = profile.emails[0].value; // Pull the first email

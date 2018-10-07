@@ -14,6 +14,7 @@ A basic chat application that allows:
 -   **Mongoose** as ODM
 -   **Socket.io** for chat support
 -   **Passport.js** for authentication by both JWT and social OAuth strategies
+-   **Redis** for caching
 
 ## NPM Commands
 

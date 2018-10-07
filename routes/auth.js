@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const keys = require('../config/keys');
 const passport = require('passport');
 const { signJWT, socialJWTsign, sendError } = require('../libs/utilities');
+const { flushCache } = require('../config/db');
 
 // Validator configuration
 const validate = require('express-validation');
@@ -65,7 +66,11 @@ router.post('/register', validate(validation.register), (req, res) => {
                     // Saving user in database
                     newUser
                         .save()
-                        .then(() => res.json({ message: 'success' }))
+                        .then(() => {
+                            // Clear users cache
+                            flushCache('allUsers');
+                            res.json({ message: 'success' });
+                        })
                         .catch(err => {
                             sendError(res, 500, errMessages.server, err);
                         });

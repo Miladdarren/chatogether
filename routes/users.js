@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const { sendError } = require('../libs/utilities');
 const fs = require('fs');
 const async = require('async');
+const { flushCache } = require('../config/db');
 
 // Validator configuration
 const validate = require('express-validation');
@@ -58,6 +59,7 @@ router.get(
             {},
             'firstName lastName username email avatar experience social'
         )
+            .cache('allUsers')
             .then(users => {
                 if (!users) {
                     return sendError(res, 404, errMessages.noUsers);
@@ -216,6 +218,9 @@ router.patch(
                     { new: true }
                 )
                     .then(user => {
+                        // Clear user from cache
+                        flushCache(req.user.id);
+
                         res.json(user);
                         callback();
                     })
@@ -236,21 +241,27 @@ router.patch(
     passport.authenticate('jwt', { session: false }),
     validate(validation.experience),
     (req, res) => {
-        User.findById(req.user.id).then(user => {
-            const newExp = {
-                title: req.body.title,
-                company: req.body.company,
-                from: req.body.from,
-                to: req.body.to,
-                current: req.body.current,
-                description: req.body.description
-            };
+        User.findById(req.user.id)
+            .cache(req.user.id)
+            .then(user => {
+                const newExp = {
+                    title: req.body.title,
+                    company: req.body.company,
+                    from: req.body.from,
+                    to: req.body.to,
+                    current: req.body.current,
+                    description: req.body.description
+                };
 
-            // Add to exp array
-            user.experience.push(newExp);
+                // Add to exp array
+                user.experience.push(newExp);
 
-            user.save().then(user => res.json(user));
-        });
+                user.save().then(user => {
+                    // Clear user from cache
+                    flushCache(req.user.id);
+                    res.json(user);
+                });
+            });
     }
 );
 
@@ -262,6 +273,7 @@ router.delete(
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
         User.findById(req.user.id)
+            .cache(req.user.id)
             .then(user => {
                 // Get remove index
                 const removeIndex = user.experience
@@ -272,7 +284,11 @@ router.delete(
                 user.experience.splice(removeIndex, 1);
 
                 // Save
-                user.save().then(user => res.json(user));
+                user.save().then(user => {
+                    // Clear user from cache
+                    flushCache(req.user.id);
+                    res.json(user);
+                });
             })
             .catch(err => {
                 sendError(res, 500, errMessages.server, err);
@@ -289,6 +305,8 @@ router.delete(
     (req, res) => {
         User.findByIdAndRemove(req.user.id)
             .then(() => {
+                // Clear user from cache
+                flushCache(req.user.id);
                 res.json({ success: true });
             })
             .catch(err => {
@@ -313,7 +331,7 @@ router.post(
 
             // Deleting previous user photo if exist
             if (req.user.avatar !== '') {
-                fs.unlink('profilePics/' + req.user.avatar, err => {
+                fs.unlink(`profilePics/${req.user.avatar}`, err => {
                     if (err) console.log(err);
                 });
             }
@@ -324,7 +342,11 @@ router.post(
                 { $set: profile },
                 { new: true }
             )
-                .then(() => res.json({ success: true }))
+                .then(() => {
+                    // Clear user from cache
+                    flushCache(req.user.id);
+                    res.json({ success: true });
+                })
                 .catch(err => {
                     sendError(res, 500, errMessages.server, err);
                 });
